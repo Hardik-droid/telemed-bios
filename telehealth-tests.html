@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleHealth+ | Virtual Health Tests</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f3fe 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c7dfa, #2c7dfa);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: #ffbb29;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #ffbb29;
+        }
+        
+        .hero {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2c7dfa;
+        }
+        
+        .hero p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .test-card h2 {
+            color: #2c7dfa;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .test-card h2 i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .test-visual {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .bp-monitor {
+            width: 160px;
+            height: 120px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            border: 4px solid #2c7dfa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bp-screen {
+            width: 140px;
+            height: 80px;
+            background: black;
+            border-radius: 5px;
+            color: #00ff00;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bp-cuff {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 40px;
+            background: #a8a8a8;
+            border-radius: 5px;
+        }
+        
+        .glucometer {
+            width: 120px;
+            height: 160px;
+            background: #eaeaea;
+            border-radius: 10px;
+            border: 3px solid #ff5722;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            position: relative;
+        }
+        
+        .glucometer-screen {
+            width: 90px;
+            height: 40px;
+            background: black;
+            border-radius: 5px;
+            color: #00ff00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+        }
+        
+        .test-drop {
+            height: 25px;
+            width: 25px;
+            border-radius: 50%;
+            background: #ff0000;
+            position: absolute;
+            top: 65px;
+            opacity: 0;
+            transition: all 1s ease;
+        }
+        
+        .test-button {
+            background: #2c7dfa;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+        }
+        
+        .test-button:hover {
+            background: #1c6dea;
+            transform: translateY(-2px);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .results.hidden {
+            display: none;
+        }
+        
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c7dfa;
+            margin: 0.5rem 0;
+        }
+        
+        .result-status {
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .normal {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        footer {
+            background: #2c7dfa;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .disclaimer {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TeleHealth<span>+</span></div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Doctors</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>Remote Health Testing</h1>
+        <p>Monitor your vital signs remotely with our virtual health testing tools. Please remember that these are simulated results for demonstration purposes only.</p>
+    </section>
+    
+    <section class="test-container">
+        <div class="test-card">
+            <h2><i>💓</i> Blood Pressure Test</h2>
+            <div class="test-visual">
+                <div class="bp-monitor">
+                    <div class="bp-screen">
+                        <div>BP: <span id="bp-value">---/---</span></div>
+                        <div>Pulse: <span id="pulse-value">--</span></div>
+                    </div>
+                    <div class="bp-cuff"></div>
+                </div>
+            </div>
+            <button class="test-button" id="bp-test-btn">Start BP Test</button>
+            <div class="results hidden" id="bp-results">
+                <h3>Results:</h3>
+                <div class="result-value" id="bp-result-value">120/80 mmHg</div>
+                <div class="result-status normal" id="bp-status">Normal</div>
+                <p id="bp-comment">Your blood pressure is within the normal range.</p>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h2><i>🩸</i> Blood Sugar Test</h2>
+            <div class="test-visual">
+                <div class="glucometer">
+                    <div class="test-drop" id="blood-drop"></div>
+                    <div class="glucometer-screen">
+                        <div id="sugar-value">---</div>
+                    </div>
+                    <div class="test-strip"></div>
+                </div>
+            </div>
+            <button class="test-button" id="sugar-test-btn">Start Sugar Test</button>
+            <div class="results hidden" id="sugar-results">
+                <h3>Results:</h3>
+                <div class="result-value" id="sugar-result-value">95 mg/dL</div>
+                <div class="result-status normal" id="sugar-status">Normal</div>
+                <p id="sugar-comment">Your blood sugar levels are within the normal range.</p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="disclaimer">
+            <p><strong>Disclaimer:</strong> This is a demonstration application only. The medical tests shown here are simulated and do not perform actual measurements. For real medical testing, please consult with a healthcare professional.</p>
+        </div>
+        <p>&copy; 2023 TeleHealth+. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Blood Pressure Test Functionality
+        document.getElementById('bp-test-btn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = "Testing...";
+            btn.classList.add('pulse');
+            
+            const bpValue = document.getElementById('bp-value');
+            const pulseValue = document.getElementById('pulse-value');
+            const results = document.getElementById('bp-results');
+            const resultValue = document.getElementById('bp-result-value');
+            const status = document.getElementById('bp-status');
+            const comment = document.getElementById('bp-comment');
+            
+            // Simulate cuff inflation and measurement
+            let systolic = 0;
+            let diastolic = 0;
+            let pulse = 0;
+            let intervalCount = 0;
+            
+            const interval = setInterval(() => {
+                intervalCount++;
+                
+                if (intervalCount <= 40) {
+                    // Simulate cuff inflation and reading
+                    systolic = Math.floor(Math.random() * 40) + 100;
+                    diastolic = Math.floor(Math.random() * 30) + 60;
+                    pulse = Math.floor(Math.random() * 40) + 60;
+                    
+                    bpValue.textContent = `${systolic}/${diastolic}`;
+                    pulseValue.textContent = pulse;
+                } else {
+                    clearInterval(interval);
+                    
+                    // Determine status
+                    let bpStatus, bpClass;
+                    if (systolic < 120 && diastolic < 80) {
+                        bpStatus = "Normal";
+                        bpClass = "normal";
+                        comment.textContent = "Your blood pressure is within the normal range.";
+                    } else if (systolic < 130 && diastolic < 80) {
+                        bpStatus = "Elevated";
+                        bpClass = "warning";
+                        comment.textContent = "Your blood pressure is slightly elevated. Consider lifestyle changes.";
+                    } else if (systolic < 140 || diastolic < 90) {
+                        bpStatus = "Stage 1 Hypertension";
+                        bpClass = "warning";
+                        comment.textContent = "You may have stage 1 hypertension. Consult your doctor.";
+                    } else {
+                        bpStatus = "Stage 2 Hypertension";
+                        bpClass = "danger";
+                        comment.textContent = "You may have stage 2 hypertension. Please consult your doctor immediately.";
+                    }
+                    
+                    // Update results
+                    resultValue.textContent = `${systolic}/${diastolic} mmHg`;
+                    status.textContent = bpStatus;
+                    status.className = `result-status ${bpClass}`;
+                    
+                    // Show results
+                    results.classList.remove('hidden');
+                    
+                    // Reset button
+                    btn.disabled = false;
+                    btn.textContent = "Start BP Test";
+                    btn.classList.remove('pulse');
+                }
+            }, 100);
+        });
+        
+        // Blood Sugar Test Functionality
+        document.getElementById('sugar-test-btn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = "Testing...";
+            btn.classList.add('pulse');
+            
+            const sugarValue = document.getElementById('sugar-value');
+            const bloodDrop = document.getElementById('blood-drop');
+            const results = document.getElementById('sugar-results');
+            const resultValue = document.getElementById('sugar-result-value');
+            const status = document.getElementById('sugar-status');
+            const comment = document.getElementById('sugar-comment');
+            
+            // Show blood drop animation
+            bloodDrop.style.opacity = "1";
+            bloodDrop.style.transform = "scale(1)";
+            
+            // Simulate measurement
+            setTimeout(() => {
+                bloodDrop.style.opacity = "0";
+                
+                const sugarLevel = Math.floor(Math.random() * 120) + 70;
+                sugarValue.textContent = sugarLevel;
+                
+                // Determine status
+                let sugarStatus, sugarClass;
+                if (sugarLevel < 100) {
+                    sugarStatus = "Normal";
+                    sugarClass = "normal";
+                    comment.textContent = "Your blood sugar levels are within the normal range.";
+                } else if (sugarLevel < 125) {
+                    sugarStatus = "Prediabetes";
+                    sugarClass = "warning";
+                    comment.textContent = "Your blood sugar levels indicate prediabetes. Monitor your diet.";
+                } else {
+                    sugarStatus = "Diabetes";
+                    sugarClass = "danger";
+                    comment.textContent = "Your blood sugar levels may indicate diabetes. Please consult your doctor.";
+                }
+                
+                // Update results
+                resultValue.textContent = `${sugarLevel} mg/dL`;
+                status.textContent = sugarStatus;
+                status.className = `result-status ${sugarClass}`;
+                
+                // Show results
+                results.classList.remove('hidden');
+                
+                // Reset button
+                btn.disabled = false;
+                btn.textContent = "Start Sugar Test";
+                btn.classList.remove('pulse');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
