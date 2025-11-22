@@ -1,0 +1,37 @@
+{
+  "name": "telemed-backend",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Complete Telemedicine Backend – Video Call (Socket.IO), JWT Auth, MySQL, PDF Reports",
+  "main": "src/config/app.js",
+  "scripts": {
+    "start": "node src/config/app.js",
+    "dev": "nodemon --watch src --ext js,json --exec node src/config/app.js"
+  },
+  "keywords": [
+    "telemedicine",
+    "video-call",
+    "socket.io",
+    "mysql",
+    "jwt"
+  ],
+  "author": "Hardik Jain",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0",
+    "pdfkit": "^0.15.0",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

@@ -1,0 +1,201 @@
+/* ================================
+   GLOBAL RESET & BASE STYLES
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #f5f8fc;
+  color: #1e293b;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+/* ================================
+   LAYOUT UTILITIES
+================================ */
+.card {
+  background: white;
+  padding: 1.4rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.2rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f2167;
+}
+
+.page-subtitle {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+.btn {
+  background: #0f2167;
+  color: white;
+  border: none;
+  padding: 0.65rem 1rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:hover {
+  background: #0a164a;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #64748b;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+/* ================================
+   INPUT FIELDS & TEXTAREA
+================================ */
+.input {
+  width: 100%;
+  padding: 0.65rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  background: white;
+  font-size: 0.92rem;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.input:focus {
+  border-color: #0f2167;
+  box-shadow: 0 0 0 3px rgba(15, 33, 103, 0.15);
+}
+
+/* ================================
+   LABELS
+================================ */
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* ================================
+   ALERTS / NOTIFICATIONS
+================================ */
+.alert-success {
+  background: rgba(34, 197, 94, 0.15);
+  border-left: 4px solid #22c55e;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #166534;
+  margin-bottom: 1rem;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 4px solid #ef4444;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #991b1b;
+  margin-bottom: 1rem;
+}
+
+/* ================================
+   TABLES (for appointments, patients)
+================================ */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.table th {
+  background: #0f2167;
+  color: white;
+  padding: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.table td {
+  padding: 0.75rem;
+  background: white;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.table tr:hover td {
+  background: #f0f4ff;
+}
+
+/* ================================
+   PRESCRIPTION MEDICINE BOXES
+================================ */
+.medicine-box {
+  border-radius: 0.8rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.7rem;
+  margin-bottom: 0.6rem;
+  background: #ffffff;
+  transition: 0.2s ease;
+}
+
+.medicine-box:hover {
+  border-color: #0f2167;
+  background: #f6f8ff;
+}
+
+/* ================================
+   LINKS
+================================ */
+a {
+  color: #0f2167;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .medicine-box {
+    padding: 0.9rem;
+  }
+}

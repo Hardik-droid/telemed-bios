@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediQuick - Emergency Ambulance Dispatch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #2c7fb8, #1d5f8a);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tagline {
+            font-size: 16px;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+        
+        .status {
+            background-color: #f8f8f8;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .status-text {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .countdown-container {
+            background-color: #f0f8ff;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .countdown {
+            font-size: 80px;
+            font-weight: bold;
+            color: #e74c3c;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            animation: pulseCount 1s infinite;
+        }
+        
+        .dispatch {
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            font-weight: 500;
+            border-top: 1px dashed #ccc;
+            border-bottom: 1px dashed #ccc;
+        }
+        
+        .dispatch-animation {
+            display: inline-block;
+            margin-left: 10px;
+            animation: blink 1.5s infinite;
+        }
+        
+        .cancel-button {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        
+        .cancel-button:hover {
+            background: linear-gradient(to right, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cancel-button:active {
+            transform: translateY(0);
+        }
+        
+        .location-info {
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-top: 1px solid #d0e6f7;
+            font-size: 14px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .sos-button {
+            display: block;
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .sos-button:hover {
+            background: linear-gradient(to right, #c0392b, #a93226);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .sos-button:active {
+            transform: translateY(-1px);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes pulseCount {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .emergency-contact {
+            padding: 15px;
+            text-align: center;
+            background-color: #fff3cd;
+            border-top: 1px solid #ffeaa7;
+            font-size: 14px;
+            color: #856404;
+        }
+        
+        .eta-display {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">MediQuick</div>
+            <div class="tagline">Affordable Care for Everyone</div>
+        </div>
+        
+        <div id="sosSection">
+            <div class="status">
+                <div class="status-text">
+                    <span class="status-indicator"></span>
+                    System Online - Ready for Emergency
+                </div>
+            </div>
+            
+            <div class="location-info">
+                <p>Your location: <span id="locationText">Detecting...</span></p>
+            </div>
+            
+            <button class="sos-button" id="sosButton">
+                SOS EMERGENCY
+            </button>
+            
+            <div class="emergency-contact">
+                <p>For immediate assistance, call: <strong>1-800-MEDIQUICK</strong></p>
+            </div>
+        </div>
+        
+        <div id="dispatchSection" class="hidden">
+            <div class="status">
+                <div class="status-text">
+                    <span class="status-indicator"></span>
+                    System Online
+                </div>
+            </div>
+            
+            <div class="countdown-container">
+                <div class="countdown" id="countdown">5</div>
+                <p>Ambulance will be dispatched in</p>
+            </div>
+            
+            <div class="dispatch">
+                Dispatching nearest unit<span class="dispatch-animation">...</span>
+            </div>
+            
+            <div class="location-info">
+                <p>Nearest hospital: <strong>City General Hospital</strong> (<span id="distance">3.7</span> km away)</p>
+                <p class="eta-display">Estimated arrival: <span id="eta">8-12</span> minutes</p>
+            </div>
+            
+            <button class="cancel-button" id="cancelButton">Cancel Dispatch</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sosButton = document.getElementById('sosButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const countdownElement = document.getElementById('countdown');
+            const sosSection = document.getElementById('sosSection');
+            const dispatchSection = document.getElementById('dispatchSection');
+            const locationText = document.getElementById('locationText');
+            const distanceElement = document.getElementById('distance');
+            const etaElement = document.getElementById('eta');
+            
+            let countdown;
+            let countdownValue = 5;
+            
+            // Hospital data with distances in km and realistic ETAs
+            const hospitals = [
+                { name: "City General Hospital", distance: (Math.random() * 5 + 1).toFixed(1), eta: "5-10" },
+                { name: "Metro Medical Center", distance: (Math.random() * 8 + 2).toFixed(1), eta: "8-15" },
+                { name: "Community Health Clinic", distance: (Math.random() * 4 + 0.5).toFixed(1), eta: "4-8" },
+                { name: "Regional Trauma Center", distance: (Math.random() * 10 + 3).toFixed(1), eta: "12-18" }
+            ];
+            
+            // Simulate location detection
+            setTimeout(() => {
+                locationText.textContent = "Detected: Central Business District (Approximate)";
+            }, 2000);
+            
+            // SOS Button Click
+            sosButton.addEventListener('click', function() {
+                // Select a random hospital
+                const hospital = hospitals[Math.floor(Math.random() * hospitals.length)];
+                
+                // Update distance and ETA
+                distanceElement.textContent = hospital.distance;
+                etaElement.textContent = hospital.eta;
+                
+                // Show dispatch section, hide SOS section
+                sosSection.classList.add('hidden');
+                dispatchSection.classList.remove('hidden');
+                
+                // Reset countdown
+                countdownValue = 5;
+                countdownElement.textContent = countdownValue;
+                
+                // Start countdown
+                countdown = setInterval(() => {
+                    countdownValue--;
+                    countdownElement.textContent = countdownValue;
+                    
+                    if (countdownValue <= 0) {
+                        clearInterval(countdown);
+                        dispatchAmbulance(hospital);
+                    }
+                }, 1000);
+            });
+            
+            // Cancel Button Click
+            cancelButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to cancel the emergency dispatch?')) {
+                    clearInterval(countdown);
+                    // Show SOS section, hide dispatch section
+                    dispatchSection.classList.add('hidden');
+                    sosSection.classList.remove('hidden');
+                    alert('Emergency dispatch cancelled.');
+                }
+            });
+            
+            // Function to simulate ambulance dispatch
+            function dispatchAmbulance(hospital) {
+                countdownElement.textContent = "0";
+                countdownElement.style.color = "#2ecc71";
+                document.querySelector('.dispatch').innerHTML = 
+                    "Ambulance dispatched! <span style='color:#2ecc71;'>✓</span>";
+                
+                // Update location info
+                document.querySelector('.location-info').innerHTML = `
+                    <p>Ambulance from: <strong>${hospital.name}</strong></p>
+                    <p>Distance: <strong>${hospital.distance} km</strong></p>
+                    <p class="eta-display">Estimated arrival: <strong>${hospital.eta} minutes</strong></p>
+                    <p>Driver: <strong>John Smith</strong> | Contact: <strong>555-0123</strong></p>
+                `;
+                
+                // Change cancel button to "Emergency Received"
+                cancelButton.textContent = "Emergency Received";
+                cancelButton.style.background = "linear-gradient(to right, #2ecc71, #27ae60)";
+                
+                // Change cancel button functionality
+                cancelButton.onclick = function() {
+                    alert('Thank you for using MediQuick. We hope the patient recovers quickly.');
+                    dispatchSection.classList.add('hidden');
+                    sosSection.classList.remove('hidden');
+                    // Reset button
+                    cancelButton.textContent = "Cancel Dispatch";
+                    cancelButton.style.background = "linear-gradient(to right, #e74c3c, #c0392b)";
+                    cancelButton.onclick = function() {
+                        if (confirm('Are you sure you want to cancel the emergency dispatch?')) {
+                            clearInterval(countdown);
+                            dispatchSection.classList.add('hidden');
+                            sosSection.classList.remove('hidden');
+                            alert('Emergency dispatch cancelled.');
+                        }
+                    };
+                };
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Live Panel - MyHealth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    .video-container { background: #000; border-radius: 1rem; overflow: hidden; }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-teal-100 min-h-screen">
+
+  <div class="max-w-7xl mx-auto p-6">
+    <header class="mb-10 text-center">
+      <h1 class="text-5xl font-bold text-emerald-800 mb-2">Doctor Live Panel</h1>
+      <p class="text-xl text-emerald-700">Real-time Patient Monitoring & Video Consultation</p>
+      <div class="mt-4 flex justify-center items-center gap-4">
+        <span id="connectionStatus" class="bg-red-500 text-white px-4 py-2 rounded-full text-sm">Connecting...</span>
+        <span id="activeCalls" class="text-2xl font-bold text-emerald-800">0 Active Calls</span>
+      </div>
+    </header>
+
+    <!-- Incoming Call Requests -->
+    <div id="callRequests" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"></div>
+
+    <!-- Active Call View -->
+    <div id="activeCallSection" class="hidden bg-white rounded-3xl shadow-2xl p-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-800">In Call with Patient</h2>
+        <button onclick="endCall()" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl text-xl transition">
+          End Call
+        </button>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="video-container">
+          <video id="localVideo" autoplay muted playsinline class="w-full h-96 object-cover"></video>
+          <p class="text-center text-white bg-black bg-opacity-70 p-2">You (Doctor)</p>
+        </div>
+        <div class="video-container">
+          <video id="remoteVideo" autoplay playsinline class="w-full h-96 object-cover"></video>
+          <p id="patientName" class="text-center text-white bg-black bg-opacity-70 p-2">Patient</p>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-center gap-8">
+        <button onclick="toggleMic()" class="bg-gray-800 hover:bg-gray-900 text-white p-6 rounded-full">
+          <i id="micIcon" class="fas fa-microphone text-3xl"></i>
+        </button>
+        <button onclick="toggleCamera()" class="bg-gray-800 hover:bg-gray-900 text-white p-6 rounded-full">
+          <i id="camIcon" class="fas fa-video text-3xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- No Active Calls -->
+    <div id="noCalls" class="text-center py-20">
+      <i class="fas fa-stethoscope text-9xl text-emerald-300 mb-6"></i>
+      <p class="text-3xl font-semibold text-emerald-700">Waiting for patients...</p>
+      <p class="text-xl text-emerald-600 mt-4">You will be notified when a patient starts a video call</p>
+    </div>
+  </div>
+
+  <script>
+    const socket = io();
+    let localStream, remoteStream, peerConnection;
+    let currentPatient = null;
+
+    const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+    const patientNameEl = document.getElementById("patientName");
+
+    socket.on("connect", () => {
+      document.getElementById("connectionStatus").textContent = "Connected";
+      document.getElementById("connectionStatus").className = "bg-green-500 text-white px-4 py-2 rounded-full text-sm";
+    });
+
+    // New patient call request
+    socket.on("offer", async ({ from, offer }) => {
+      currentPatient = from;
+      patientNameEl.textContent = from;
+
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-2xl shadow-xl p-8 text-center pulse border-4 border-green-500";
+      card.innerHTML = `
+        <i class="fas fa-video text-6xl text-green-600 mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">New Video Call</h3>
+        <p class="text-xl text-gray-600 mb-6">Patient: <strong>${from}</strong></p>
+        <button onclick="acceptCall('${from}', '${offer}')" class="bg-green-600 hover:bg-green-700 text-white px-10 py-5 rounded-xl text-xl font-bold transition">
+          Accept Call
+        </button>
+      `;
+      document.getElementById("callRequests").prepend(card);
+      document.getElementById("noCalls").classList.add("hidden");
+    });
+
+    window.acceptCall = async (patient, offer) => {
+      document.getElementById("activeCallSection").classList.remove("hidden");
+      document.getElementById("callRequests").innerHTML = "";
+      document.getElementById("noCalls").classList.add("hidden");
+
+      localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      localVideo.srcObject = localStream;
+
+      peerConnection = new RTCPeerConnection(config);
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+      peerConnection.ontrack = (e) => {
+        remoteVideo.srcObject = e.streams[0];
+      };
+
+      peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      socket.emit("answer", { from: patient, answer: JSON.stringify(peerConnection.localDescription) });
+    };
+
+    socket.on("icecandidate", (candidate) => {
+      if (peerConnection) peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    });
+
+    socket.on("call-ended", () => endCall());
+
+    function endCall() {
+      if (peerConnection) peerConnection.close();
+      if (localStream) localStream.getTracks().forEach(t => t.stop());
+      localVideo.srcObject = null;
+      remoteVideo.srcObject = null;
+      document.getElementById("activeCallSection").classList.add("hidden");
+      document.getElementById("noCalls").classList.remove("hidden");
+      currentPatient = null;
+    }
+
+    function toggleMic() {
+      const enabled = localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+      document.getElementById("micIcon").classList.toggle("fa-microphone-slash", !enabled);
+    }
+
+    function toggleCamera() {
+      const enabled = localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
+      document.getElementById("camIcon").classList.toggle("fa-video-slash", !enabled);
+    }
+
+    // Clean up on leave
+    window.addEventListener("beforeunload", () => {
+      if (currentPatient) socket.emit("end-call", { from: currentPatient });
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+</body>
+</html>
